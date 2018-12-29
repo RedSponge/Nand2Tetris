@@ -1,0 +1,13 @@
+/*
+    Takes an input and outputs it
+    1 -> 1
+    0 -> 0
+*/
+
+CHIP Dummy {
+    IN in;
+    OUT out;
+    PARTS:
+    Not(in=in, out=notin);
+    Not(in=notin, out=out);
+}

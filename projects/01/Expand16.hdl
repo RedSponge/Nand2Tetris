@@ -1,0 +1,30 @@
+/*
+    Takes a single bit input and expands it to 16 bits
+    in = 0 -> out = 0000000000000000
+    in = 1 -> out = 1111111111111111
+*/
+
+CHIP Expand16 {
+    IN in;
+    OUT out[16];
+    PARTS:
+    Dummy(in=in, out=out[0]);
+    Dummy(in=in, out=out[1]);
+    Dummy(in=in, out=out[2]);
+    Dummy(in=in, out=out[3]);
+
+    Dummy(in=in, out=out[4]);
+    Dummy(in=in, out=out[5]);
+    Dummy(in=in, out=out[6]);
+    Dummy(in=in, out=out[7]);
+
+    Dummy(in=in, out=out[8]);
+    Dummy(in=in, out=out[9]);
+    Dummy(in=in, out=out[10]);
+    Dummy(in=in, out=out[11]);
+
+    Dummy(in=in, out=out[12]);
+    Dummy(in=in, out=out[13]);
+    Dummy(in=in, out=out[14]);
+    Dummy(in=in, out=out[15]); 
+}
