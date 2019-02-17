@@ -17,9 +17,9 @@
 // Implementation: the ALU logic manipulates the x and y inputs
 // and operates on the resulting values, as follows:
 // if (zx == 1) set x = 0        // 16-bit constant
-// if (nx == 1) set x = !x       // bitwise not
+// if (nx == 1) set x = neg x       // bitwise not
 // if (zy == 1) set y = 0        // 16-bit constant
-// if (ny == 1) set y = !y       // bitwise not
+// if (ny == 1) set y = neg y       // bitwise not
 // if (f == 1)  set out = x + y  // integer 2's complement addition
 // if (f == 0)  set out = x & y  // bitwise and
 // if (no == 1) set out = !out   // bitwise not
@@ -40,9 +40,31 @@ CHIP ALU {
         out[16], // 16-bit output
         zr, // 1 if (out == 0), 0 otherwise
         ng; // 1 if (out < 0),  0 otherwise
-
     PARTS:
-    
+        // Negate
+        Not16(in=x, out=negx);
+        Not16(in=y, out=negy);
+
+        Mux4Way16(a=x, b=false, c=negx, d=true, sel[0]=zx, sel[1]=nx, out=calcx);
+        Mux4Way16(a=y, b=false, c=negy, d=true, sel[0]=zy, sel[1]=ny, out=calcy);
+
+        // Do Calculations
+        And16(a=calcx, b=calcy, out=andcalc);
+        Add16(a=calcx, b=calcy, out=addcalc);
+
+        // Choose Correct Calc
+        Mux16(a=andcalc, b=addcalc, sel=f, out=rescalc);
+
+        // Modifty And Output
+        Not16(in=rescalc, out=negrescalc);
+        Mux16(a=rescalc, b=negrescalc, sel=no, out=out, out[15]=neg, out[0..7]=firsthalf, out[8..15]=sechalf);
+
+        Or8Way(in=firsthalf, out=firstor);
+        Or8Way(in=sechalf, out=secor);
+        Or(a=firstor, b=secor, out=iszero);
+        Not(in=iszero, out=zr);
+
+        And(a=neg, b=true, out=ng);
 
 
 }
